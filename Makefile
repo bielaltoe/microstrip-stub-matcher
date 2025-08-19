@@ -42,7 +42,7 @@ build-linux-onefile:
 # Windows build must be done on Windows (or via CI). This target is a hint.
 build-win:
 	@echo "Build para Windows deve ser feito no Windows (ou via GitHub Actions)."
-	@echo "Use o workflow em .github/workflows/build-binaries.yml ou rode:"
+	@echo "Use o workflow em .github/workflows/build.yml ou rode:"
 	@echo "  py -m venv .venv && .venv\\Scripts\\pip install -r requirements.txt pyinstaller"
 	@echo "  .venv\\Scripts\\pyinstaller --noconfirm --onefile --windowed --collect-all matplotlib --collect-all ttkbootstrap --hidden-import PIL._tkinter_finder --name calculadora-casamento magrf.py"
 
