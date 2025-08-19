@@ -43,10 +43,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller pyinstaller-hooks-contrib
       - name: Build (onefile)
-        run: >-
-          pyinstaller --noconfirm --onefile --windowed --collect-all matplotlib
-          --collect-all ttkbootstrap --hidden-import PIL._tkinter_finder
-          --name calculadora-casamento magrf.py
+        shell: pwsh
+        run: pyinstaller --noconfirm --onefile --windowed --collect-all matplotlib --collect-all ttkbootstrap --hidden-import PIL._tkinter_finder --name calculadora-casamento magrf.py
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
