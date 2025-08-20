@@ -8,6 +8,17 @@ Aplicação educacional e prática para casamento de impedâncias com:
 - Varredura de S11 (largura de banda)
 - Visualização do layout e corte da microfita
 
+## Docs
+
+<div align="center">
+  <img src="docs/casamento_stub.png" alt="Carta de Smith" width="800"/>
+  <img src="docs/microfita.png" alt="Layout de Microfita" width="800"/>
+  <img src="docs/analise_largura.png" alt="Perda de retorno vs Frequencia" width="800"/>
+
+</div>
+
+
+
 ## Requisitos
 - Python 3.8+
 - Dependências:
@@ -17,18 +28,70 @@ Aplicação educacional e prática para casamento de impedâncias com:
   - matplotlib
 
 No Linux (Ubuntu/Debian), instale Tk caso necessário:
-- sudo apt-get update && sudo apt-get install -y python3-tk
+```bash
+sudo apt-get update && sudo apt-get install -y python3-tk
+```
 
-## Instalação
-1) Crie e ative um ambiente virtual (recomendado):
-- python -m venv .venv
-- Windows: .venv\Scripts\activate
-- Linux/macOS: source .venv/bin/activate
-2) Instale as dependências:
-- pip install ttkbootstrap numpy matplotlib
+## Instalação (dev) — Passos rápidos
+Windows (PowerShell):
+```powershell
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-## Execução
-- python magrf.py
+Linux/macOS (bash):
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Ou usando Makefile (Linux/macOS):
+```bash
+make install
+```
+
+## Execução (dev)
+```bash
+python magrf.py
+# ou
+make run
+```
+
+## Binários prontos (Downloads)
+- Via GitHub Actions (Artifacts):
+  - Ao criar uma tag `vX.Y.Z` ou rodar o workflow manualmente, a CI publica artifacts com os binários:
+    - Windows: `calculadora-casamento-windows` (contém o `.exe` em `dist/`)
+    - Linux: `calculadora-casamento-linux` (pasta onedir em `dist/calculadora-casamento/`)
+
+## Compilação/Empacotamento
+Este projeto inclui um Makefile com alvos úteis:
+
+- make install — prepara o ambiente (venv + dependências)
+- make run — executa a aplicação (GUI)
+- make build — Linux onefile (pode falhar em algumas distros devido a libpython)
+- make build-linux — Linux onedir (recomendado; mais robusto)
+- make build-linux-onefile — Linux onefile com coleções extras (tentativa)
+- make clean — remove artefatos (`build/`, `dist/`, `*.spec`, `__pycache__`)
+
+Notas:
+- Saída Linux (onedir): `dist/calculadora-casamento/` contendo o executável `calculadora-casamento`
+- Saída Linux (onefile): `dist/calculadora-casamento` (único binário)
+- Windows: gere pelo workflow do GitHub ou numa máquina Windows (ver abaixo)
+
+### Build no Windows
+Opções:
+1) GitHub Actions (recomendado):
+   - Workflow em `.github/workflows/build.yml`
+   - Disparo por tag `v*.*.*` (ex.: `v1.0.2`) ou manual (Actions > Run workflow)
+   - Artifacts publicados com o `.exe` dentro de `dist/`
+2) Localmente no Windows (PowerShell):
+```powershell
+py -m venv .venv
+.venv\Scripts\pip install -r requirements.txt pyinstaller pyinstaller-hooks-contrib
+.venv\Scripts\pyinstaller --noconfirm --onefile --windowed --collect-all matplotlib --collect-all ttkbootstrap --hidden-import PIL._tkinter_finder --name calculadora-casamento magrf.py
+```
 
 ## Como Usar
 
@@ -102,39 +165,40 @@ A interface possui 4 abas principais.
 - LC: elementos ideais (L, C), sem parasitas; podem existir múltiplas soluções para o mesmo caso
 
 ## Solução de Problemas
-- Erro de backend Tk/TkAgg ou janela não abre:
-  - Instale o Tk (Linux): sudo apt-get install python3-tk
-- Gráfico não atualiza ou erro de conversão:
-  - Verifique se todos os campos numéricos estão preenchidos (use ponto “.” como separador decimal)
-- S11 não plota:
-  - Calcule o stub primeiro na aba principal
+- Tk/TkAgg: instale o Tk (Linux): `sudo apt-get install python3-tk`
+- Campos numéricos: use ponto “.” como separador decimal
+- S11 não plota: calcule o stub primeiro na aba principal
+- PyInstaller (Linux onefile): se falhar com libpython faltando, prefira `make build-linux` (onedir)
+- Pillow/Tk no bundle: usamos `--hidden-import PIL._tkinter_finder` para evitar erros `PyImagingPhoto`
 
-## Créditos
-- tkinter + ttkbootstrap (UI)
-- numpy (cálculos)
-- matplotlib (Carta de Smith e gráficos)
-
-Sugestões e melhorias são bem-vindas.
-
----
-
-## Compilação/Empacotamento (Linux)
-Este projeto inclui um Makefile para facilitar:
-
-- Preparar ambiente e instalar dependências: `make install`
-- Executar a aplicação: `make run`
-- Gerar binário standalone (PyInstaller): `make build`
-  - Saída: `dist/calculadora-casamento` (modo janela/GUI)
-
-Requisitos extras para build: `python3-venv`, `python3-tk`, e o PyInstaller (instalado automaticamente pelo alvo `build`).
+## Estrutura do Projeto
+- `magrf.py` — aplicação principal (GUI)
+- `requirements.txt` — dependências
+- `Makefile` — tarefas de build/execução
+- `.github/workflows/build.yml` — CI para gerar binários (Linux/Windows)
 
 ## Publicação no GitHub (passos sugeridos)
 1. Iniciar repositório e primeiro commit:
-   - git init
-   - git add .
-   - git commit -m "chore: initial commit"
-   - git branch -M main
-2. Crie um repositório no GitHub (web) e copie a URL (ex.: `https://github.com/<user>/<repo>.git`)
+```bash
+git init
+git add .
+git commit -m "chore: initial commit"
+git branch -M main
+```
+2. Crie um repositório no GitHub e copie a URL (ex.: `https://github.com/<user>/<repo>.git`)
 3. Vincule e envie:
-   - git remote add origin <URL>
-   - git push -u origin main
+```bash
+git remote add origin <URL>
+git push -u origin main
+```
+4. Releases/Artifacts:
+```bash
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+## Contribuição
+- Issues e PRs são bem-vindos. Sugestões de funcionalidades e correções de bugs ajudam o projeto.
+
+## Licença
+- Defina uma licença (ex.: MIT) e inclua um arquivo `LICENSE` no repositório.
