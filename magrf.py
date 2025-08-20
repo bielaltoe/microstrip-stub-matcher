@@ -7,12 +7,43 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.patches import Circle
 import matplotlib.patches as patches
+from pathlib import Path
+import sys
 
 # =============================================================================
 # BLOCO DAS FUNÇÕES DE CÁLCULO (LÓGICA DO BACK-END)
 # =============================================================================
 
 C0 = 299792458  # Velocidade da luz no vácuo (m/s)
+
+# --- NEW: função utilitária para definir o ícone da janela de forma cross-platform ---
+def set_app_icon(window):
+    try:
+        base_dir = Path(__file__).resolve().parent
+    except NameError:
+        base_dir = Path(".").resolve()
+
+    ico_path = base_dir / "resources" / "icon.ico"
+    png_path = base_dir / "resources" / "icon.png"
+
+    # Tenta .ico no Windows
+    if sys.platform.startswith("win") and ico_path.exists():
+        try:
+            window.iconbitmap(str(ico_path))
+            return
+        except Exception:
+            pass
+
+    # Tenta .png no Linux/macOS (ou fallback no Windows se preferir PNG)
+    if png_path.exists():
+        try:
+            img = tk.PhotoImage(file=str(png_path))
+            window.iconphoto(True, img)
+            # Evita garbage collection
+            window._icon_ref = img
+            return
+        except Exception:
+            pass
 
 def dimensionar_microstrip(z0_ohms, h_metros, er):
     """
@@ -997,5 +1028,6 @@ class CalculatorApp:
 
 if __name__ == "__main__":
     root = tb.Window(themename="superhero")
+    set_app_icon(root)  # Usa ícone .ico no Windows e .png no Linux/macOS
     app = CalculatorApp(root)
     root.mainloop()

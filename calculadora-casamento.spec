@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
 
-datas = []
+datas = [('resources/icon.png', 'resources'), ('resources/icon.ico', 'resources')]
 binaries = []
 hiddenimports = ['PIL._tkinter_finder']
 tmp_ret = collect_all('matplotlib')
@@ -41,6 +41,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['resources/icon.png'],
 )
 coll = COLLECT(
     exe,

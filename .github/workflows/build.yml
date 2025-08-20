@@ -24,6 +24,9 @@ jobs:
             --collect-all matplotlib \
             --collect-all ttkbootstrap \
             --hidden-import PIL._tkinter_finder \
+            --add-data "resources/icon.png:resources" \
+            --add-data "resources/icon.ico:resources" \
+            --icon resources/icon.png \
             --name calculadora-casamento magrf.py
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -44,7 +47,7 @@ jobs:
           pip install -r requirements.txt pyinstaller pyinstaller-hooks-contrib
       - name: Build (onefile)
         shell: pwsh
-        run: pyinstaller --noconfirm --onefile --windowed --collect-all matplotlib --collect-all ttkbootstrap --hidden-import PIL._tkinter_finder --name calculadora-casamento magrf.py
+        run: pyinstaller --noconfirm --onefile --windowed --collect-all matplotlib --collect-all ttkbootstrap --hidden-import PIL._tkinter_finder --add-data "resources/icon.png;resources" --add-data "resources/icon.ico;resources" --icon resources/icon.ico --name calculadora-casamento magrf.py
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
